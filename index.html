@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deepfake & Social Engineering Awareness Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Background Particles -->
+    <div class="particles-container">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <div class="nav-logo-3d">
+                    <div class="logo-cube-small">
+                        <div class="cube-face-small cube-front-small">N</div>
+                        <div class="cube-face-small cube-back-small">E</div>
+                        <div class="cube-face-small cube-left-small">U</div>
+                        <div class="cube-face-small cube-right-small">R</div>
+                        <div class="cube-face-small cube-top-small">O</div>
+                        <div class="cube-face-small cube-bottom-small">X</div>
+                    </div>
+                </div>
+                <span>NeuroX AI</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link active">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#what-is-deepfake" class="nav-link">What is Deepfake</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#social-engineering-simulator" class="nav-link">Social Engineering</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#deepfake-detection" class="nav-link">Detection Demo</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#how-to-protect" class="nav-link">Protection</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#about-project" class="nav-link">About Project</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#demo" class="nav-link">Demo</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#learn" class="nav-link">Learn</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contact" class="nav-link">Contact</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    NeuroX AI Defense
+                </h1>
+                <p class="hero-subtitle">
+                    In an era of AI-powered deception, understanding the risks of deepfakes and social engineering attacks is crucial. 
+                    Our platform provides cutting-edge tools and knowledge to help you identify, prevent, and respond to these emerging threats.
+                </p>
+                <div class="hero-buttons">
+                    <button class="cta-button" onclick="scrollToSection('demo')">
+                        <i class="fas fa-play"></i>
+                        Try Demo
+                    </button>
+                    <button class="secondary-button" onclick="scrollToSection('learn')">
+                        <i class="fas fa-graduation-cap"></i>
+                        Learn More
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="cyber-grid"></div>
+                <div class="floating-elements">
+                    <div class="element element-1"><i class="fas fa-user-secret"></i></div>
+                    <div class="element element-2"><i class="fas fa-robot"></i></div>
+                    <div class="element element-3"><i class="fas fa-eye-slash"></i></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What is a Deepfake Section -->
+    <section id="what-is-deepfake" class="what-is-deepfake">
+        <div class="container">
+            <h2 class="section-title">What is a Deepfake?</h2>
+            
+            <div class="deepfake-explanation">
+                <p class="explanation-text">
+                    Deepfakes are AI-generated synthetic media that manipulate existing images, videos, or audio to create convincing but entirely fabricated content. 
+                    Using advanced machine learning techniques, these technologies can swap faces, alter expressions, or generate entirely new scenarios 
+                    that appear authentic to the human eye.
+                </p>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="comparison-card real-card">
+                    <div class="card-header">
+                        <span class="authenticity-label real-label">
+                            <i class="fas fa-check-circle"></i>
+                            Real
+                        </span>
+                    </div>
+                    <div class="card-image">
+                        <div class="image-placeholder">
+                            <i class="fas fa-user"></i>
+                            <span>Original Video</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h4>Authentic Content</h4>
+                        <p>Genuine video with natural facial movements, consistent lighting, and authentic emotional expressions.</p>
+                    </div>
+                </div>
+
+                <div class="comparison-card fake-card">
+                    <div class="card-header">
+                        <span class="authenticity-label fake-label">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            AI Generated
+                        </span>
+                    </div>
+                    <div class="card-image">
+                        <div class="image-placeholder">
+                            <i class="fas fa-robot"></i>
+                            <span>Deepfake Video</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h4>Synthetic Media</h4>
+                        <p>AI-manipulated content showing potential artifacts, unnatural movements, or digital inconsistencies.</p>
+                    </div>
+                </div>
+
+                <div class="comparison-card analysis-card">
+                    <div class="card-header">
+                        <span class="authenticity-label analysis-label">
+                            <i class="fas fa-search"></i>
+                            Analysis
+                        </span>
+                    </div>
+                    <div class="card-image">
+                        <div class="analysis-placeholder">
+                            <i class="fas fa-microscope"></i>
+                            <span>Detection Tools</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h4>AI Detection</h4>
+                        <p>Advanced algorithms analyze facial inconsistencies, blinking patterns, and digital artifacts to identify manipulation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="warning-note">
+                <div class="warning-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="warning-content">
+                    <h4>⚠️ Important Warning</h4>
+                    <p>
+                        Deepfake technology can be misused for malicious purposes including misinformation, fraud, harassment, and privacy violations. 
+                        This educational platform is designed to raise awareness and provide detection tools. Always verify the authenticity of 
+                        suspicious media and report harmful content to appropriate authorities.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Project Section -->
+    <section id="about-project" class="about-project">
+        <div class="container">
+            <h2 class="section-title">About Project</h2>
+            
+            <div class="about-content">
+                <div class="purpose-section">
+                    <div class="section-header">
+                        <div class="header-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h3>Purpose of Platform</h3>
+                    </div>
+                    <div class="section-content">
+                        <p>
+                            The NeuroX AI Defense platform serves as an educational resource designed to raise awareness about 
+                            emerging digital threats in the age of artificial intelligence. Our mission is to provide comprehensive 
+                            knowledge and practical tools for identifying, understanding, and defending against deepfake technology 
+                            and social engineering attacks.
+                        </p>
+                        <p>
+                            Through interactive demonstrations, educational content, and practical guidance, we aim to bridge the gap 
+                            between technical complexity and public understanding, empowering individuals to navigate the digital landscape 
+                            with enhanced critical thinking and security awareness.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="risks-section">
+                    <div class="section-header">
+                        <div class="header-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h3>Digital Threat Landscape</h3>
+                    </div>
+                    <div class="section-content">
+                        <div class="risk-item">
+                            <h4>Deepfake Technology</h4>
+                            <p>
+                                Advanced AI systems can now generate synthetic media that convincingly mimics real individuals, 
+                                creating unprecedented challenges for information authenticity. These technologies manipulate facial 
+                                features, vocal patterns, and behavioral characteristics to produce content that appears genuine 
+                                despite being entirely fabricated.
+                            </p>
+                        </div>
+                        <div class="risk-item">
+                            <h4>Social Engineering Attacks</h4>
+                            <p>
+                                Psychological manipulation techniques exploit cognitive biases and social trust to deceive targets. 
+                                When combined with deepfake capabilities, these attacks become highly personalized and significantly 
+                                more convincing, increasing their potential for harm in personal, professional, and political contexts.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ethics-section">
+                    <div class="section-header">
+                        <div class="header-icon">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <h3>Ethical Considerations</h3>
+                    </div>
+                    <div class="section-content">
+                        <div class="ethics-statement">
+                            <h4>Educational Mission</h4>
+                            <p>
+                                This platform is strictly educational and does not provide tools for creating or distributing 
+                                deepfake content. All demonstrations are simulated for learning purposes only, designed to help 
+                                users recognize potential threats rather than create them.
+                            </p>
+                        </div>
+                        <div class="ethics-statement">
+                            <h4>Research Integrity</h4>
+                            <p>
+                                We are committed to responsible AI research and education. Our work focuses on defensive 
+                                technologies, threat awareness, and ethical guidelines for the development and deployment of 
+                                synthetic media detection systems.
+                            </p>
+                        </div>
+                        <div class="ethics-statement">
+                            <h4>Privacy and Security</h4>
+                            <p>
+                                No user data is collected, stored, or processed beyond what is necessary for the educational 
+                                demonstrations. All uploaded files are processed locally in the browser and are not transmitted 
+                                to external servers.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Engineering Simulator Section -->
+    <section id="social-engineering-simulator" class="social-engineering-simulator">
+        <div class="container">
+            <h2 class="section-title">Social Engineering Simulator (Educational)</h2>
+            
+            <div class="simulator-intro">
+                <p class="intro-text">
+                    Test your ability to identify phishing and social engineering attempts in a safe, educational environment. 
+                    Analyze real-world examples and learn the warning signs of digital manipulation.
+                </p>
+            </div>
+
+            <div class="simulator-container">
+                <div class="message-selector">
+                    <h3>Choose a Scenario to Analyze:</h3>
+                    <div class="scenario-buttons">
+                        <button class="scenario-btn active" data-scenario="phishing-email">
+                            <i class="fas fa-envelope"></i>
+                            Phishing Email
+                        </button>
+                        <button class="scenario-btn" data-scenario="sms-scam">
+                            <i class="fas fa-sms"></i>
+                            SMS Scam
+                        </button>
+                        <button class="scenario-btn" data-scenario="social-media">
+                            <i class="fab fa-facebook"></i>
+                            Social Media
+                        </button>
+                    </div>
+                </div>
+
+                <div class="message-display">
+                    <!-- Phishing Email Scenario -->
+                    <div class="scenario-content active" id="phishing-email">
+                        <div class="message-card email-mockup">
+                            <div class="email-header">
+                                <div class="sender-info">
+                                    <div class="sender-avatar">
+                                        <i class="fas fa-user-circle"></i>
+                                    </div>
+                                    <div class="sender-details">
+                                        <div class="sender-name">Amazon Security</div>
+                                        <div class="sender-email">security@amaz0n-update.com</div>
+                                    </div>
+                                </div>
+                                <div class="email-time">Today, 2:30 PM</div>
+                            </div>
+                            <div class="email-subject">URGENT: Your Account Will Be Suspended</div>
+                            <div class="email-body">
+                                <p>Dear Customer,</p>
+                                <p>We've detected suspicious activity on your Amazon account. For your security, we've temporarily suspended your account.</p>
+                                <p>To restore your account, please click the link below and verify your information within 24 hours:</p>
+                                <div class="fake-link">https://www.amazon-secure-verify.com/login</div>
+                                <p>Failure to verify will result in permanent account closure.</p>
+                                <p>Thank you,<br>Amazon Security Team</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SMS Scam Scenario -->
+                    <div class="scenario-content" id="sms-scam">
+                        <div class="message-card sms-mockup">
+                            <div class="sms-header">
+                                <div class="sms-sender">+1 (555) 123-4567</div>
+                                <div class="sms-time">Today, 3:45 PM</div>
+                            </div>
+                            <div class="sms-body">
+                                <p>🚨 BANK ALERT: Your debit card ending in 1234 has been temporarily blocked due to unusual activity. 
+                                Click here to unblock: bit.ly/bank-verify-urgent</p>
+                                <p>Reply STOP to unsubscribe</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Media Scenario -->
+                    <div class="scenario-content" id="social-media">
+                        <div class="message-card social-mockup">
+                            <div class="social-header">
+                                <div class="social-sender-info">
+                                    <div class="social-avatar">
+                                        <i class="fab fa-facebook"></i>
+                                    </div>
+                                    <div class="social-sender-details">
+                                        <div class="social-sender-name">Facebook Support</div>
+                                        <div class="social-verified">✓ Verified</div>
+                                    </div>
+                                </div>
+                                <div class="social-time">1 hour ago</div>
+                            </div>
+                            <div class="social-body">
+                                <p>Your account has been flagged for copyright violations. To avoid permanent suspension, you must appeal within 24 hours.</p>
+                                <button class="fake-social-button">Appeal Now</button>
+                                <p class="social-stats">👁 1.2M people saw this post</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-section">
+                    <div class="question-card">
+                        <h3>Is this message safe or a scam?</h3>
+                        <div class="answer-buttons">
+                            <button class="answer-btn safe-btn" data-answer="safe">
+                                <i class="fas fa-check"></i>
+                                Safe
+                            </button>
+                            <button class="answer-btn scam-btn" data-answer="scam">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Scam
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-section" id="result-section" style="display: none;">
+                    <div class="result-card">
+                        <div class="result-icon" id="result-icon"></div>
+                        <div class="result-content">
+                            <h3 id="result-title"></h3>
+                            <div id="result-explanation"></div>
+                            <div class="red-flags" id="red-flags"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="educational-note">
+                    <div class="note-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="note-content">
+                        <h4>Educational Purpose Only</h4>
+                        <p>
+                            This simulator is designed for educational purposes to help you recognize social engineering attempts. 
+                            Always verify suspicious messages through official channels and never share personal information 
+                            or click on suspicious links.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deepfake Detection Demo Section -->
+    <section id="deepfake-detection" class="deepfake-detection">
+        <div class="container">
+            <h2 class="section-title">Deepfake Detection Demo</h2>
+            
+            <div class="detection-intro">
+                <p class="intro-text">
+                    Upload an image or video to analyze for AI manipulation. Our advanced detection algorithms 
+                    identify deepfake patterns and provide confidence scores.
+                </p>
+            </div>
+
+            <div class="detection-container">
+                <div class="upload-section">
+                    <div class="upload-card">
+                        <div class="upload-area" id="uploadArea">
+                            <div class="upload-content">
+                                <div class="upload-icon">
+                        </div>
+                    </div>
+                    <div class="loading-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-percentage" id="progressPercentage">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-section" id="detectionResult" style="display: none;">
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="result-icon" id="resultIcon"></div>
+                        <div class="result-title">
+                            <h3 id="resultTitle"></h3>
+                            <p id="resultSubtitle"></p>
+                                <p id="resultSubtitle"></p>
+                            </div>
+                        </div>
+                        
+                        <div class="confidence-section">
+                            <h4>Confidence Score</h4>
+                            <div class="confidence-meter">
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" id="confidenceFill"></div>
+                                </div>
+                                <div class="confidence-percentage" id="confidencePercentage"></div>
+                            </div>
+                        </div>
+
+                        <div class="risk-section">
+                            <h4>Risk Assessment</h4>
+                            <div class="risk-indicator" id="riskIndicator">
+                                <div class="risk-level" id="riskLevel"></div>
+                                <div class="risk-description" id="riskDescription"></div>
+                            </div>
+                        </div>
+
+                        <div class="analysis-details">
+                            <h4>Analysis Details</h4>
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <span class="detail-label">Facial Consistency</span>
+                                    <span class="detail-value" id="facialConsistency"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Lighting Analysis</span>
+                                    <span class="detail-value" id="lightingAnalysis"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Digital Artifacts</span>
+                                    <span class="detail-value" id="digitalArtifacts"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Background Analysis</span>
+                                    <span class="detail-value" id="backgroundAnalysis"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="secondary-action-btn" id="analyzeAnother">
+                                <i class="fas fa-redo"></i>
+                                Analyze Another File
+                            </button>
+                            <button class="primary-action-btn" id="downloadReport">
+                                <i class="fas fa-download"></i>
+                                Download Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo-note">
+                    <div class="note-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="note-content">
+                        <h4>Demo Mode</h4>
+                        <p>
+                            This is a frontend demonstration. The analysis results are simulated for educational purposes 
+                            to show how deepfake detection systems work. No actual AI processing is performed.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="demo">
+        <div class="container">
+            <h2 class="section-title">Interactive Demo</h2>
+            <p class="section-subtitle">Experience our threat detection tools firsthand</p>
+            <div class="demo-container">
+                <div class="demo-card">
+                    <h3>Deepfake Detection</h3>
+                    <p>Upload media to analyze for AI manipulation</p>
+                    <button class="demo-button">
+                        <i class="fas fa-upload"></i>
+                        Try Detection
+                    </button>
+                </div>
+                <div class="demo-card">
+                    <h3>Phishing Simulator</h3>
+                    <p>Test your ability to spot social engineering attempts</p>
+                    <button class="demo-button">
+                        <i class="fas fa-fish"></i>
+                        Start Simulation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to Protect Yourself Section -->
+    <section id="how-to-protect" class="how-to-protect">
+        <div class="container">
+            <h2 class="section-title">How to Protect Yourself</h2>
+            
+            <div class="protection-grid">
+                <div class="protection-card">
+                    <div class="protection-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Verify Sources</h3>
+                    <p>Always confirm the identity of senders through official channels before taking action.</p>
+                </div>
+
+                <div class="protection-card">
+                    <div class="protection-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <h3>Check Metadata</h3>
+                    <p>Examine file properties and creation dates to spot inconsistencies.</p>
+                </div>
+
+                <div class="protection-card">
+                    <div class="protection-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Avoid Urgency Traps</h3>
+                    <p>Scammers create false deadlines to pressure you into quick decisions.</p>
+                </div>
+
+                <div class="protection-card">
+                    <div class="protection-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Use 2FA</h3>
+                    <p>Enable two-factor authentication on all accounts for an extra layer of security.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Learn Section -->
+    <section id="learn" class="learn">
+        <div class="container">
+            <h2 class="section-title">Learn & Protect</h2>
+            <div class="learn-grid">
+                <div class="learn-item">
+                    <div class="learn-number">01</div>
+                    <h3>Recognize</h3>
+                    <p>Learn to identify visual and audio artifacts in deepfakes</p>
+                </div>
+                <div class="learn-item">
+                    <div class="learn-number">02</div>
+                    <h3>Verify</h3>
+                    <p>Use multi-factor authentication and source verification</p>
+                </div>
+                <div class="learn-item">
+                    <div class="learn-number">03</div>
+                    <h3>Respond</h3>
+                    <p>Know the proper steps when encountering suspicious content</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Get in Touch</h2>
+            <p class="section-subtitle">Have questions or need assistance? Reach out to our team</p>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Email</h3>
+                            <p>info@neurox-defense.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Phone</h3>
+                            <p>+1 (555) 123-4567</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Location</h3>
+                            <p>San Francisco, CA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required>
+                            <span class="error-message" id="nameError"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                            <span class="error-message" id="emailError"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                            <span class="error-message" id="messageError"></span>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-paper-plane"></i>
+                                Send Message
+                            </button>
+                        </div>
+                        <div class="success-message" id="successMessage" style="display: none;">
+                            <i class="fas fa-check-circle"></i>
+                            <p>Message sent successfully! We'll get back to you soon.</p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <div class="footer-logo-3d">
+                        <div class="logo-cube-small">
+                            <div class="cube-face-small cube-front-small">N</div>
+                            <div class="cube-face-small cube-back-small">E</div>
+                            <div class="cube-face-small cube-left-small">U</div>
+                            <div class="cube-face-small cube-right-small">R</div>
+                            <div class="cube-face-small cube-top-small">O</div>
+                            <div class="cube-face-small cube-bottom-small">X</div>
+                        </div>
+                    </div>
+                    <span>NeuroX AI</span>
+                </div>
+                <p>&copy; 2024 Deepfake & Social Engineering Awareness Platform. Educational purposes only.</p>
+                <div class="footer-social">
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
