@@ -60,6 +60,9 @@ const detectionRoutes = require('./routes/detection');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust proxy for Render/Heroku deployment
+app.set('trust proxy', true);
+
 // Session middleware (in production, use express-session with a proper store)
 app.use((req, res, next) => {
   req.session = req.session || {};
