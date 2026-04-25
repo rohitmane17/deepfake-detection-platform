@@ -29,7 +29,7 @@ const submitContactForm = async (req, res) => {
     // Prepare email to admin
     const adminEmailOptions = {
       from: process.env.EMAIL_FROM || 'noreply@neurox-ai.com',
-      to: 'admin@neurox-ai.com', // Admin email
+      to: process.env.ADMIN_EMAIL || 'admin@neurox-ai.com', // Admin email
       subject: `New Contact Form Submission: ${subject}`,
       html: `
         <h2>New Contact Form Submission</h2>
