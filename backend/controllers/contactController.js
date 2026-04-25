@@ -64,16 +64,35 @@ const submitContactForm = async (req, res) => {
     let emailSent = false;
     
     try {
+      console.log('Email configuration check:', {
+        hasEmailUser: !!process.env.EMAIL_USER,
+        hasEmailPass: !!process.env.EMAIL_PASS,
+        hasAdminEmail: !!process.env.ADMIN_EMAIL,
+        emailUser: process.env.EMAIL_USER
+      });
+
       const transporter = createTransporter();
       
       // Only send emails if email configuration is properly set up
       if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+        console.log('Sending admin email to:', process.env.ADMIN_EMAIL || 'admin@neurox-ai.com');
         await transporter.sendMail(adminEmailOptions);
+        console.log('Admin email sent successfully');
+
+        console.log('Sending user confirmation email to:', email);
         await transporter.sendMail(userEmailOptions);
+        console.log('User email sent successfully');
         emailSent = true;
+      } else {
+        console.log('Email configuration incomplete - skipping email sending');
       }
     } catch (emailError) {
       console.error('Email sending failed:', emailError);
+      console.error('Email error details:', {
+        message: emailError.message,
+        code: emailError.code,
+        response: emailError.response
+      });
       // Continue without failing the request
     }
 
