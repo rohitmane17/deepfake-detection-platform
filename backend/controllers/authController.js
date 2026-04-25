@@ -1,8 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
-// Mock user database - in real app, this would be MongoDB or similar
-const users = [];
+const User = require('../models/User');
 
 // Generate JWT token
 const generateToken = (userId, email) => {
@@ -19,7 +17,7 @@ const register = async (req, res) => {
     const { name, email, password } = req.body;
 
     // Check if user already exists
-    const existingUser = users.find(u => u.email === email);
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -27,35 +25,31 @@ const register = async (req, res) => {
       });
     }
 
-    // Hash password
-    const saltRounds = 12;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    // Create new user
-    const newUser = {
-      id: 'user-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+    // Create new user (password will be hashed by the model's pre-save hook)
+    const newUser = new User({
       name,
       email,
-      password: hashedPassword,
-      createdAt: new Date().toISOString(),
-      isActive: true,
-      role: 'user'
-    };
+      password
+    });
 
-    // Save user to mock database
-    users.push(newUser);
+    await newUser.save();
+
+    // Update last login
+    newUser.lastLogin = new Date();
+    await newUser.save();
 
     // Generate token
-    const token = generateToken(newUser.id, newUser.email);
+    const token = generateToken(newUser._id, newUser.email);
 
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = newUser;
+    // Convert user to object and remove password
+    const userObj = newUser.toObject();
+    delete userObj.password;
 
     res.status(201).json({
       success: true,
       message: 'User registered successfully',
       data: {
-        user: userWithoutPassword,
+        user: userObj,
         token: token
       }
     });
@@ -75,8 +69,8 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user by email
-    const user = users.find(u => u.email === email);
+    // Find user by email (include password for comparison)
+    const user = await User.findOne({ email }).select('+password');
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -92,8 +86,8 @@ const login = async (req, res) => {
       });
     }
 
-    // Compare password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // Compare password using the model's method
+    const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
@@ -101,17 +95,22 @@ const login = async (req, res) => {
       });
     }
 
-    // Generate token
-    const token = generateToken(user.id, user.email);
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
 
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = user;
+    // Generate token
+    const token = generateToken(user._id, user.email);
+
+    // Convert user to object and remove password
+    const userObj = user.toObject();
+    delete userObj.password;
 
     res.status(200).json({
       success: true,
       message: 'Login successful',
       data: {
-        user: userWithoutPassword,
+        user: userObj,
         token: token
       }
     });
@@ -148,7 +147,7 @@ const logout = async (req, res) => {
 const getProfile = async (req, res) => {
   try {
     // User is already authenticated and attached to req.user by middleware
-    const user = users.find(u => u.id === req.user.userId);
+    const user = await User.findById(req.user.userId);
     
     if (!user) {
       return res.status(404).json({
@@ -157,14 +156,15 @@ const getProfile = async (req, res) => {
       });
     }
 
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = user;
+    // Convert user to object and remove password
+    const userObj = user.toObject();
+    delete userObj.password;
 
     res.status(200).json({
       success: true,
       message: 'Profile retrieved successfully',
       data: {
-        user: userWithoutPassword
+        user: userObj
       }
     });
 
@@ -184,27 +184,40 @@ const updateProfile = async (req, res) => {
     const userId = req.user.userId;
 
     // Find user
-    const userIndex = users.findIndex(u => u.id === userId);
-    if (userIndex === -1) {
+    const user = await User.findById(userId);
+    if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
       });
     }
 
-    // Update user data
-    if (name) users[userIndex].name = name;
-    if (email) users[userIndex].email = email;
-    users[userIndex].updatedAt = new Date().toISOString();
+    // Check if email is being changed and if it's already taken
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email already in use'
+        });
+      }
+      user.email = email;
+    }
 
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = users[userIndex];
+    // Update user data
+    if (name) user.name = name;
+    user.updatedAt = new Date();
+    await user.save();
+
+    // Convert user to object and remove password
+    const userObj = user.toObject();
+    delete userObj.password;
 
     res.status(200).json({
       success: true,
       message: 'Profile updated successfully',
       data: {
-        user: userWithoutPassword
+        user: userObj
       }
     });
 

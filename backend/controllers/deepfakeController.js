@@ -1,8 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
+const { spawn } = require('child_process');
+const Analysis = require('../models/Analysis');
 
-// Mock deepfake analysis function (in real implementation, this would use ML models)
+// Deepfake analysis function using Python script
 const analyzeDeepfake = async (req, res) => {
   try {
     if (!req.file) {
@@ -18,44 +20,96 @@ const analyzeDeepfake = async (req, res) => {
     // Generate analysis ID
     const analysisId = 'analysis-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
     
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Mock analysis results (in real implementation, this would use actual ML models)
-    const mockResults = {
-      id: analysisId,
+    // Create analysis record in database
+    const analysis = new Analysis({
+      userId: req.user?.id || null, // Will be null for unauthenticated users
       filename: req.file.filename,
       originalName: req.file.originalname,
       fileSize: req.file.size,
       fileType: req.file.mimetype,
-      timestamp: new Date().toISOString(),
-      analysis: {
-        isDeepfake: Math.random() > 0.5, // Random result for demo
-        confidence: Math.random() * 0.3 + 0.7, // 70-100% confidence
-        riskLevel: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)],
-        processingTime: '2.1s',
-        details: {
-          facialInconsistencies: Math.random() * 0.4,
-          audioVisualSync: Math.random() * 0.3,
-          digitalArtifacts: Math.random() * 0.5,
-          metadataAnalysis: Math.random() * 0.2
-        },
-        recommendations: [
-          'Verify the source of this content',
-          'Check for unusual facial movements or expressions',
-          'Look for inconsistent lighting or shadows',
-          'Verify with original source if possible'
-        ]
-      }
+      filePath: filePath,
+      status: 'processing'
+    });
+    
+    await analysis.save();
+    
+    // Run Python face detection script
+    const pythonResult = await runPythonAnalysis(filePath);
+    
+    if (!pythonResult.success) {
+      await analysis.updateStatus('failed', pythonResult.error);
+      return res.status(500).json({
+        success: false,
+        message: 'Analysis failed',
+        error: pythonResult.error
+      });
+    }
+    
+    // Update analysis with results
+    analysis.prediction = pythonResult.is_deepfake ? 'AI Generated' : 'Real';
+    analysis.confidence = pythonResult.confidence;
+    analysis.riskLevel = pythonResult.image_analysis?.overall_risk || 'Low';
+    analysis.explanation = pythonResult.explanation;
+    analysis.featuresChecked = [
+      'Facial inconsistencies',
+      'Lighting mismatch',
+      'Frame artifacts',
+      'Eye blink patterns',
+      'Skin texture analysis',
+      'Background consistency',
+      'Compression artifacts',
+      'Frequency analysis',
+      'Edge detection',
+      'Texture analysis'
+    ];
+    analysis.imageAnalysis = {
+      blurScore: pythonResult.image_analysis?.blur_score || 0,
+      noiseLevel: pythonResult.image_analysis?.noise_level || 0,
+      compressionArtifacts: pythonResult.image_analysis?.compression_artifacts || 0,
+      faceConsistency: pythonResult.image_analysis?.face_consistency || 0,
+      frequencyAnomaly: pythonResult.image_analysis?.frequency_anomaly || 0,
+      edgeInconsistency: pythonResult.image_analysis?.edge_inconsistency || 0,
+      textureAnomaly: pythonResult.image_analysis?.texture_anomaly || 0,
+      overallRisk: pythonResult.image_analysis?.overall_risk || 'Low'
     };
-
-    // Clean up uploaded file after analysis (optional)
-    // fs.unlinkSync(filePath);
-
+    analysis.faceCount = pythonResult.face_count || 0;
+    analysis.faces = pythonResult.faces || [];
+    analysis.processingTime = pythonResult.analysis_time || '0s';
+    analysis.status = 'completed';
+    
+    await analysis.save();
+    
+    // Increment user's analysis count if authenticated
+    if (req.user?.id) {
+      const User = require('../models/User');
+      const user = await User.findById(req.user.id);
+      if (user) {
+        await user.incrementAnalysisCount();
+      }
+    }
+    
     res.status(200).json({
       success: true,
       message: 'Deepfake analysis completed successfully',
-      data: mockResults
+      data: {
+        id: analysis._id,
+        filename: analysis.filename,
+        originalName: analysis.originalName,
+        fileSize: analysis.fileSize,
+        fileType: analysis.fileType,
+        prediction: analysis.prediction,
+        confidence: analysis.confidence,
+        riskLevel: analysis.riskLevel,
+        explanation: analysis.explanation,
+        featuresChecked: analysis.featuresChecked,
+        imageAnalysis: analysis.imageAnalysis,
+        faceCount: analysis.faceCount,
+        faces: analysis.faces,
+        processingTime: analysis.processingTime,
+        model: analysis.model,
+        modelVersion: analysis.modelVersion,
+        createdAt: analysis.createdAt
+      }
     });
 
   } catch (error) {
@@ -72,6 +126,52 @@ const analyzeDeepfake = async (req, res) => {
       error: error.message
     });
   }
+};
+
+// Run Python analysis script
+const runPythonAnalysis = (imagePath) => {
+  return new Promise((resolve, reject) => {
+    const python = spawn('python', ['face_detection.py', imagePath], {
+      cwd: __dirname
+    });
+    
+    let dataString = '';
+    let errorString = '';
+    
+    python.stdout.on('data', (data) => {
+      dataString += data.toString();
+    });
+    
+    python.stderr.on('data', (data) => {
+      errorString += data.toString();
+    });
+    
+    python.on('close', (code) => {
+      if (code !== 0) {
+        reject({
+          success: false,
+          error: errorString || 'Python script failed'
+        });
+      } else {
+        try {
+          const result = JSON.parse(dataString);
+          resolve(result);
+        } catch (e) {
+          reject({
+            success: false,
+            error: 'Failed to parse Python output'
+          });
+        }
+      }
+    });
+    
+    python.on('error', (err) => {
+      reject({
+        success: false,
+        error: `Failed to start Python script: ${err.message}`
+      });
+    });
+  });
 };
 
 // Advanced deepfake analysis with image processing

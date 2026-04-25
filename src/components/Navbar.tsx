@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 const Navbar = () => {
   const [activeLink, setActiveLink] = useState('#home');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,8 +34,6 @@ const Navbar = () => {
     { href: '#deepfake-detection', label: 'Detection Demo' },
     { href: '#how-to-protect', label: 'Protection' },
     { href: '#about-project', label: 'About Project' },
-    { href: '#demo', label: 'Demo' },
-    { href: '#learn', label: 'Learn' },
     { href: '#contact', label: 'Contact' },
   ];
 
@@ -54,22 +53,23 @@ const Navbar = () => {
           </div>
           <span>NeuroX AI</span>
         </div>
-        <ul className="nav-menu">
+        <ul className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
           {navLinks.map((link) => (
             <li key={link.href} className="nav-item">
               <Link 
                 href={link.href} 
                 className={`nav-link ${activeLink === link.href ? 'active' : ''}`}
+                onClick={() => setIsMenuOpen(false)}
               >
                 {link.label}
               </Link>
             </li>
           ))}
         </ul>
-        <div className="hamburger">
-          <span className="bar"></span>
-          <span className="bar"></span>
-          <span className="bar"></span>
+        <div className="hamburger" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <span className={`bar ${isMenuOpen ? 'active' : ''}`}></span>
+          <span className={`bar ${isMenuOpen ? 'active' : ''}`}></span>
+          <span className={`bar ${isMenuOpen ? 'active' : ''}`}></span>
         </div>
       </div>
     </nav>

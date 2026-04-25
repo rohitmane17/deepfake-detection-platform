@@ -35,10 +35,11 @@ const WhatIsDeepfake = () => {
               </span>
             </div>
             <div className="card-image">
-              <div className="image-placeholder">
-                <i className="fas fa-image"></i>
-                <span>Authentic Media</span>
-              </div>
+              <img 
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop" 
+                alt="Authentic Media - Real person photo"
+                className="card-img"
+              />
             </div>
             <div className="card-content">
               <h4>Authentic Media</h4>
@@ -58,10 +59,11 @@ const WhatIsDeepfake = () => {
               </span>
             </div>
             <div className="card-image">
-              <div className="analysis-placeholder">
-                <i className="fas fa-brain"></i>
-                <span>AI-Generated Content</span>
-              </div>
+              <img 
+                src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop" 
+                alt="AI Generated Content - Digital art"
+                className="card-img"
+              />
             </div>
             <div className="card-content">
               <h4>AI-Generated Content</h4>
@@ -81,10 +83,11 @@ const WhatIsDeepfake = () => {
               </span>
             </div>
             <div className="card-image">
-              <div className="image-placeholder">
-                <i className="fas fa-user-secret"></i>
-                <span>Deepfake Technology</span>
-              </div>
+              <img 
+                src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop" 
+                alt="Deepfake Technology - Digital manipulation"
+                className="card-img"
+              />
             </div>
             <div className="card-content">
               <h4>Deepfake Technology</h4>

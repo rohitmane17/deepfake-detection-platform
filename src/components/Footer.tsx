@@ -4,60 +4,53 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-primary-dark border-t border-glass-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer className="footer">
+      <div className="container">
+        <div className="footer-content">
           {/* Logo Section */}
-          <div className="flex flex-col items-center md:items-start">
-            <Link href="#home" className="flex items-center space-x-3 mb-4">
-              <div className="relative">
-                <div className="w-8 h-8">
-                  <div className="w-full h-full bg-gradient-to-br from-neon-blue to-neon-purple rounded-lg flex items-center justify-center text-primary-dark font-bold text-sm">
-                    N
-                  </div>
-                </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent">
-                  NeuroX AI
-                </span>
+          <div className="footer-logo-section">
+            <Link href="#home" className="footer-logo-link">
+              <div className="footer-logo">
+                <div className="footer-logo-icon">N</div>
+                <span className="footer-logo-text">NeuroX AI</span>
               </div>
             </Link>
-            <p className="text-text-secondary text-sm">
+            <p className="footer-tagline">
               Advanced cybersecurity solutions for the digital age
             </p>
           </div>
 
           {/* Navigation Links */}
-          <div className="text-center md:text-left">
-            <h3 className="text-lg font-bold text-text-primary mb-4">
-              Quick Links
-            </h3>
-            <div className="space-y-3">
-              <Link href="#what-is-deepfake" className="text-text-secondary hover:text-neon-blue transition-colors duration-300">
+          <div className="footer-links-section">
+            <h3 className="footer-heading">Quick Links</h3>
+            <div className="footer-links">
+              <Link href="#what-is-deepfake" className="footer-link">
                 What is Deepfake?
               </Link>
-              <Link href="#social-engineering-simulator" className="text-text-secondary hover:text-neon-blue transition-colors duration-300">
+              <Link href="#social-engineering-simulator" className="footer-link">
                 Social Engineering
               </Link>
-              <Link href="#deepfake-detection" className="text-text-secondary hover:text-neon-blue transition-colors duration-300">
+              <Link href="#deepfake-detection" className="footer-link">
                 Detection Demo
               </Link>
-              <Link href="#how-to-protect" className="text-text-secondary hover:text-neon-blue transition-colors duration-300">
+              <Link href="#how-to-protect" className="footer-link">
                 Protection
+              </Link>
+              <Link href="#about-project" className="footer-link">
+                About Project
               </Link>
             </div>
           </div>
 
           {/* Social Links */}
-          <div className="text-center md:text-right">
-            <h3 className="text-lg font-bold text-text-primary mb-4">
-              Connect With Us
-            </h3>
-            <div className="flex justify-center md:justify-end space-x-6">
+          <div className="footer-social-section">
+            <h3 className="footer-heading">Connect With Us</h3>
+            <div className="footer-social-links">
               <a
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-text-secondary hover:text-neon-blue transition-colors duration-300"
+                className="footer-social-link"
               >
                 GitHub
               </a>
@@ -65,7 +58,7 @@ const Footer = () => {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-text-secondary hover:text-neon-blue transition-colors duration-300"
+                className="footer-social-link"
               >
                 LinkedIn
               </a>
@@ -73,7 +66,7 @@ const Footer = () => {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-text-secondary hover:text-neon-blue transition-colors duration-300"
+                className="footer-social-link"
               >
                 Twitter
               </a>
@@ -82,12 +75,12 @@ const Footer = () => {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-glass-border mt-8 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center text-center">
-            <p className="text-text-secondary text-sm">
+        <div className="footer-bottom">
+          <div className="footer-bottom-content">
+            <p className="footer-copyright">
               © {currentYear} NeuroX AI Defense. All rights reserved.
             </p>
-            <p className="text-text-secondary text-sm">
+            <p className="footer-built">
               Built with cybersecurity awareness in mind 🛡️
             </p>
           </div>

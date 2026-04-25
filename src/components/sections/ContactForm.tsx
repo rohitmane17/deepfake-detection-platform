@@ -103,160 +103,109 @@ const ContactForm = () => {
   ];
 
   return (
-    <section id="contact" className="py-24 bg-gradient-to-br from-accent-dark to-primary-dark">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="contact" className="contact">
+      <div className="container">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent mb-6 animate-glow">
-            Get in Touch
-          </h2>
-          <p className="text-xl text-text-secondary max-w-4xl mx-auto leading-relaxed">
-            Have questions or need assistance? Reach out to our team
-          </p>
-        </div>
+        <h2 className="section-title">Get in Touch</h2>
+        <p className="section-subtitle">
+          Have questions or need assistance? Reach out to our team
+        </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="contact-grid">
           {/* Contact Information */}
-          <div className="space-y-6">
+          <div className="contact-info-list">
             {contactInfo.map((info, index) => (
-              <Card key={index} hover className="group">
-                <div className="p-8 flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-neon-blue to-neon-purple rounded-full flex items-center justify-center text-primary-dark group-hover:scale-110 transition-transform duration-300">
-                    {info.icon}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-neon-blue mb-2 group-hover:text-neon-purple transition-colors duration-300">
-                      {info.title}
-                    </h3>
-                    <p className="text-text-secondary leading-relaxed">
-                      {info.detail}
-                    </p>
-                  </div>
+              <div key={index} className="contact-card">
+                <div className="contact-icon">
+                  {info.icon}
                 </div>
-              </Card>
+                <div className="contact-info">
+                  <h4>{info.title}</h4>
+                  <p>{info.detail}</p>
+                </div>
+              </div>
             ))}
           </div>
 
           {/* Contact Form */}
-          <Card>
-            <div className="p-8">
-              <h3 className="text-2xl font-bold text-neon-blue mb-8">
-                Send us a Message
-              </h3>
-              
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Name Field */}
-                <div>
-                  <label htmlFor="name" className="block text-text-primary font-medium mb-3">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-glass-bg border-glass-border rounded-lg text-text-primary placeholder-text-muted focus:border-neon-blue focus:ring-2 focus:ring-neon-blue/20 transition-all duration-300 ${
-                      errors.name ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''
-                    }`}
-                    placeholder="Your full name"
-                    disabled={isSubmitting}
-                  />
-                  {errors.name && (
-                    <p className="mt-2 text-sm text-red-400 flex items-center space-x-2">
-                      <span>•</span>
-                      {errors.name}
-                    </p>
-                  )}
-                </div>
-
-                {/* Email Field */}
-                <div>
-                  <label htmlFor="email" className="block text-text-primary font-medium mb-3">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-glass-bg border-glass-border rounded-lg text-text-primary placeholder-text-muted focus:border-neon-blue focus:ring-2 focus:ring-neon-blue/20 transition-all duration-300 ${
-                      errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''
-                    }`}
-                    placeholder="your.email@example.com"
-                    disabled={isSubmitting}
-                  />
-                  {errors.email && (
-                    <p className="mt-2 text-sm text-red-400 flex items-center space-x-2">
-                      <span>•</span>
-                      {errors.email}
-                    </p>
-                  )}
-                </div>
-
-                {/* Message Field */}
-                <div>
-                  <label htmlFor="message" className="block text-text-primary font-medium mb-3">
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    rows={5}
-                    className={`w-full px-4 py-3 bg-glass-bg border-glass-border rounded-lg text-text-primary placeholder-text-muted focus:border-neon-blue focus:ring-2 focus:ring-neon-blue/20 transition-all duration-300 resize-none ${
-                      errors.message ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''
-                    }`}
-                    placeholder="Tell us how we can help you..."
-                    disabled={isSubmitting}
-                  />
-                  {errors.message && (
-                    <p className="mt-2 text-sm text-red-400 flex items-center space-x-2">
-                      <span>•</span>
-                      {errors.message}
-                    </p>
-                  )}
-                </div>
-
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="lg"
+          <div className="contact-form-container">
+            <h3>Send us a Message</h3>
+            
+            <form onSubmit={handleSubmit}>
+              {/* Name Field */}
+              <div className="form-group">
+                <label htmlFor="name">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Your full name"
                   disabled={isSubmitting}
-                  className="w-full px-8"
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center justify-center">
-                      <div className="w-5 h-5 border-2 border-primary-dark border-t-transparent rounded-full animate-spin" />
-                      <span className="ml-2">Sending...</span>
-                    </div>
-                  ) : (
-                    'Send Message'
-                  )}
-                </Button>
-              </form>
+                />
+                {errors.name && (
+                  <p className="form-error">{errors.name}</p>
+                )}
+              </div>
 
-              {/* Success Message */}
-              {showSuccess && (
-                <div className="mt-6 bg-green-500/10 border border-green-500/30 rounded-xl p-6 flex items-center space-x-4">
-                  <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-semibold text-green-400 mb-2">
-                      Message sent successfully!
-                    </h4>
-                    <p className="text-text-secondary">
-                      We'll get back to you soon.
-                    </p>
-                  </div>
+              {/* Email Field */}
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="your.email@example.com"
+                  disabled={isSubmitting}
+                />
+                {errors.email && (
+                  <p className="form-error">{errors.email}</p>
+                )}
+              </div>
+
+              {/* Message Field */}
+              <div className="form-group">
+                <label htmlFor="message">Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  rows={5}
+                  placeholder="Tell us how we can help you..."
+                  disabled={isSubmitting}
+                />
+                {errors.message && (
+                  <p className="form-error">{errors.message}</p>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className="submit-btn"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Sending...' : 'Send Message'}
+              </button>
+            </form>
+
+            {/* Success Message */}
+            {showSuccess && (
+              <div className="success-message">
+                <div className="contact-icon" style={{ width: '2rem', height: '2rem' }}>
+                  <CheckCircle className="w-5 h-5" />
                 </div>
-              )}
-            </div>
-          </Card>
+                <div>
+                  <h4>Message sent successfully!</h4>
+                  <p>We'll get back to you soon.</p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>

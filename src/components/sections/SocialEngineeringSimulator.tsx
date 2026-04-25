@@ -3,53 +3,128 @@
 import { useState } from 'react';
 
 const SocialEngineeringSimulator = () => {
-  const [selectedScenario, setSelectedScenario] = useState('email');
   const [userAnswer, setUserAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [userMessage, setUserMessage] = useState({
+    sender: '',
+    subject: '',
+    body: ''
+  });
+  const [errors, setErrors] = useState({
+    sender: '',
+    subject: '',
+    body: ''
+  });
 
-  const scenarios = {
-    email: {
-      title: 'Phishing Email',
-      icon: 'fa-envelope',
-      content: {
-        sender: 'security@paypal.com',
-        subject: 'Urgent: Account Verification Required',
-        body: 'Dear Customer,\n\nWe have detected unusual activity on your PayPal account. Please click the link below to verify your identity immediately:\n\nhttps://secure-paypal-verification.com/login\n\nFailure to verify within 24 hours will result in account suspension.\n\nPayPal Security Team',
+  const analyzeMessage = (message: typeof userMessage): { isScam: boolean; confidence: number; redFlags: string[] } => {
+    const redFlags: string[] = [];
+    const lowerBody = message.body.toLowerCase();
+    const lowerSubject = message.subject.toLowerCase();
+    const lowerSender = message.sender.toLowerCase();
+
+    // Check for urgency indicators
+    if (lowerBody.includes('urgent') || lowerBody.includes('immediately') || lowerBody.includes('asap') || lowerBody.includes('right now')) {
+      redFlags.push('Urgent language creating pressure');
+    }
+
+    // Check for suspicious URLs
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const urls = lowerBody.match(urlRegex) || [];
+    urls.forEach(url => {
+      if (url.includes('verify') || url.includes('login') || url.includes('account') || url.includes('secure')) {
+        if (!url.includes('paypal.com') && !url.includes('amazon.com') && !url.includes('google.com') && !url.includes('microsoft.com')) {
+          redFlags.push('Suspicious URL that doesn\'t match official domain');
+        }
       }
-    },
-    sms: {
-      title: 'SMS Scam',
-      icon: 'fa-comment',
-      content: {
-        sender: '+1-800-555-0123',
-        subject: 'Bank Alert',
-        body: 'ALERT: Your account has been temporarily locked. Click here to unlock: https://bank-security-verify.com\n\nReply STOP to unsubscribe',
-      }
-    },
-    social: {
-      title: 'Social Media Attack',
-      icon: 'fa-users',
-      content: {
-        sender: 'HR Department',
-        subject: 'Employee Update Required',
-        body: 'Hi team,\n\nPlease update your employee portal credentials by clicking here: https://company-portal-update.com\n\nThis is mandatory for all employees by end of day.\n\nThank you,\nHR Team',
-      }
-    },
+    });
+
+    // Check for requests for sensitive information
+    if (lowerBody.includes('password') || lowerBody.includes('ssn') || lowerBody.includes('credit card') || lowerBody.includes('bank account') || lowerBody.includes('personal information')) {
+      redFlags.push('Request for sensitive information');
+    }
+
+    // Check for threats
+    if (lowerBody.includes('suspended') || lowerBody.includes('locked') || lowerBody.includes('deactivated') || lowerBody.includes('closed')) {
+      redFlags.push('Threat of account suspension or closure');
+    }
+
+    // Check for poor grammar (simple check)
+    if (lowerBody.includes('kindly') || lowerBody.includes('dear customer') && !lowerBody.includes('dear ')) {
+      redFlags.push('Generic greeting typical of scams');
+    }
+
+    // Check for unexpected sender
+    if (lowerSender.includes('security') || lowerSender.includes('support') || lowerSender.includes('admin')) {
+      redFlags.push('Official-looking sender that may be impersonated');
+    }
+
+    // Check for financial terms
+    if (lowerBody.includes('wire transfer') || lowerBody.includes('money order') || lowerBody.includes('gift card') || lowerBody.includes('bitcoin')) {
+      redFlags.push('Request for unusual payment method');
+    }
+
+    // Calculate confidence based on red flags
+    const confidence = Math.min(90, redFlags.length * 20 + 30);
+    const isScam = redFlags.length >= 2;
+
+    return { isScam, confidence, redFlags };
   };
 
-  const currentScenario = scenarios[selectedScenario as keyof typeof scenarios];
-
-  const handleAnswer = (answer: 'safe' | 'scam') => {
-    setUserAnswer(answer);
+  const handleAnalyze = () => {
+    if (!validateForm()) {
+      return;
+    }
+    const analysis = analyzeMessage(userMessage);
+    setUserAnswer(analysis.isScam ? 'scam' : 'safe');
     setShowResult(true);
   };
 
   const resetScenario = () => {
     setUserAnswer(null);
     setShowResult(false);
+    setUserMessage({ sender: '', subject: '', body: '' });
   };
 
-  const isCorrectAnswer = 'scam'; // All scenarios are scams for educational purposes
+  const analysisResult = showResult ? analyzeMessage(userMessage) : null;
+
+  const validateForm = () => {
+    const newErrors = {
+      sender: '',
+      subject: '',
+      body: ''
+    };
+
+    // Sender validation
+    if (userMessage.sender && userMessage.sender.length > 100) {
+      newErrors.sender = 'Sender must be less than 100 characters';
+    } else if (userMessage.sender && !/^[a-zA-Z0-9._%+-@]+$/.test(userMessage.sender)) {
+      newErrors.sender = 'Sender contains invalid characters';
+    }
+
+    // Subject validation
+    if (userMessage.subject && userMessage.subject.length > 200) {
+      newErrors.subject = 'Subject must be less than 200 characters';
+    }
+
+    // Body validation
+    if (!userMessage.body || userMessage.body.trim().length === 0) {
+      newErrors.body = 'Message body is required';
+    } else if (userMessage.body.length < 10) {
+      newErrors.body = 'Message must be at least 10 characters long';
+    } else if (userMessage.body.length > 5000) {
+      newErrors.body = 'Message must be less than 5000 characters';
+    }
+
+    setErrors(newErrors);
+    return !newErrors.sender && !newErrors.subject && !newErrors.body;
+  };
+
+  const handleInputChange = (field: keyof typeof userMessage, value: string) => {
+    setUserMessage(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
 
   return (
     <section id="social-engineering-simulator" className="social-engineering-simulator">
@@ -62,95 +137,89 @@ const SocialEngineeringSimulator = () => {
         </p>
 
         <div className="simulator-container">
-          {/* Scenario Selector */}
-          <div className="scenario-selector">
-            <h3>Choose a Scenario</h3>
-            <div className="scenario-buttons">
-              {Object.entries(scenarios).map(([key, scenario]) => (
-                <button
-                  key={key}
-                  className={`scenario-btn ${selectedScenario === key ? 'active' : ''}`}
-                  onClick={() => {
-                    setSelectedScenario(key);
-                    resetScenario();
-                  }}
-                >
-                  <i className={`fas ${scenario.icon}`}></i>
-                  <span>{scenario.title}</span>
-                </button>
-              ))}
+          {/* Message Input Form */}
+          <div className="message-input-form">
+            <h3>Enter a Message to Analyze</h3>
+            <p className="form-instruction">
+              Paste any suspicious email, SMS, or message below to check if it might be a social engineering attack.
+            </p>
+            
+            <div className="input-group">
+              <label htmlFor="sender">Sender</label>
+              <input
+                type="text"
+                id="sender"
+                placeholder="e.g., security@paypal.com"
+                value={userMessage.sender}
+                onChange={(e) => handleInputChange('sender', e.target.value)}
+                disabled={showResult}
+              />
+              {errors.sender && <span className="error-message">{errors.sender}</span>}
             </div>
-          </div>
 
-          {/* Message Display */}
-          <div className="message-display">
-            <div className="message-header">
-              <div className="sender-info">
-                <i className="fas fa-user"></i>
-                <span className="sender">{currentScenario.content.sender}</span>
-              </div>
-              <div className="subject-info">
-                <i className="fas fa-envelope"></i>
-                <span className="subject">{currentScenario.content.subject}</span>
-              </div>
+            <div className="input-group">
+              <label htmlFor="subject">Subject</label>
+              <input
+                type="text"
+                id="subject"
+                placeholder="e.g., Urgent: Account Verification Required"
+                value={userMessage.subject}
+                onChange={(e) => handleInputChange('subject', e.target.value)}
+                disabled={showResult}
+              />
+              {errors.subject && <span className="error-message">{errors.subject}</span>}
             </div>
-            <div className="message-body">
-              <p>{currentScenario.content.body}</p>
-            </div>
-          </div>
 
-          {/* Answer Options */}
-          {!showResult && (
-            <div className="answer-options">
-              <h4>Is this message safe or a scam?</h4>
-              <div className="option-buttons">
-                <button
-                  className="option-btn safe-btn"
-                  onClick={() => handleAnswer('safe')}
-                >
-                  <i className="fas fa-check-circle"></i>
-                  Safe
-                </button>
-                <button
-                  className="option-btn scam-btn"
-                  onClick={() => handleAnswer('scam')}
-                >
-                  <i className="fas fa-exclamation-triangle"></i>
-                  Scam
-                </button>
-              </div>
+            <div className="input-group">
+              <label htmlFor="body">Message Body</label>
+              <textarea
+                id="body"
+                rows={6}
+                placeholder="Paste the full message content here..."
+                value={userMessage.body}
+                onChange={(e) => handleInputChange('body', e.target.value)}
+                disabled={showResult}
+              />
+              {errors.body && <span className="error-message">{errors.body}</span>}
             </div>
-          )}
+
+            {!showResult && (
+              <button className="analyze-btn" onClick={handleAnalyze} disabled={!userMessage.body}>
+                <i className="fas fa-search"></i>
+                Analyze Message
+              </button>
+            )}
+          </div>
 
           {/* Result Display */}
-          {showResult && (
-            <div className={`result-display ${userAnswer === isCorrectAnswer ? 'correct' : 'incorrect'}`}>
+          {showResult && analysisResult && (
+            <div className={`result-display ${analysisResult.isScam ? 'scam-detected' : 'safe-message'}`}>
               <div className="result-icon">
-                <i className={`fas ${userAnswer === isCorrectAnswer ? 'fa-check-circle' : 'fa-times-circle'}`}></i>
+                <i className={`fas ${analysisResult.isScam ? 'fa-exclamation-triangle' : 'fa-check-circle'}`}></i>
               </div>
               <div className="result-content">
                 <h4>
-                  {userAnswer === isCorrectAnswer ? 'Correct!' : 'Not Quite Right'}
+                  {analysisResult.isScam ? 'Potential Scam Detected' : 'Message Appears Safe'}
                 </h4>
                 <p>
-                  {userAnswer === isCorrectAnswer 
-                    ? 'You correctly identified this as a social engineering attempt. Great job!'
-                    : 'This is actually a social engineering attempt. Let\'s learn what to look for.'
+                  {analysisResult.isScam 
+                    ? `This message shows ${analysisResult.redFlags.length} red flags with ${analysisResult.confidence}% confidence.`
+                    : 'This message does not show obvious signs of social engineering, but always remain cautious.'
                   }
                 </p>
-                <div className="explanation">
-                  <h5>Red Flags:</h5>
-                  <ul>
-                    <li>Urgent language creating pressure</li>
-                    <li>Suspicious URLs that don\'t match official domains</li>
-                    <li>Requests for sensitive information</li>
-                    <li>Poor grammar or spelling errors</li>
-                    <li>Unexpected communications from official services</li>
-                  </ul>
-                </div>
+                {analysisResult.redFlags.length > 0 && (
+                  <div className="explanation">
+                    <h5>Red Flags Found:</h5>
+                    <ul>
+                      {analysisResult.redFlags.map((flag, index) => (
+                        <li key={index}>{flag}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 <button className="try-again-btn" onClick={resetScenario}>
                   <i className="fas fa-redo"></i>
-                  Try Another Scenario
+                  Analyze Another Message
                 </button>
               </div>
             </div>
