@@ -13,6 +13,7 @@ const DetectionSimulator = require('./utils/detectionSimulator');
 const AnalysisLogger = require('./utils/analysisLogger');
 const ErrorHandler = require('./utils/errorHandler');
 const connectDB = require('./config/database');
+const { specs, swaggerUi } = require('./config/swagger');
 
 // Load environment variables
 dotenv.config();
@@ -239,11 +240,24 @@ app.use('/api/auth', csrfProtection);
 app.use('/api/contact', csrfProtection);
 app.use('/api/deepfake', csrfProtection);
 
-// Routes
-app.use('/api/deepfake', deepfakeRoutes);
-app.use('/api/social-engineering', socialEngineeringRoutes);
-app.use('/api/contact', contactRoutes);
+// API Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+  explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'NeuroX AI Defense API Documentation'
+}));
+
+// API Docs JSON endpoint
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(specs);
+});
+
+// API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/deepfake', deepfakeRoutes);
+app.use('/api/contact', contactRoutes);
+app.use('/api/social-engineering', socialEngineeringRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/detection', detectionRoutes);
 

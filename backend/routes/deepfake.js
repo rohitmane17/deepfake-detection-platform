@@ -39,10 +39,108 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
-// POST /api/deepfake/analyze - Analyze uploaded file for deepfake detection
+/**
+ * @swagger
+ * /api/deepfake/analyze:
+ *   post:
+ *     summary: Analyze uploaded file for deepfake detection
+ *     tags: [Deepfake Analysis]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - file
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: Image or video file to analyze
+ *     responses:
+ *       200:
+ *         description: Analysis completed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Analysis completed successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Analysis'
+ *       400:
+ *         description: Invalid file or validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 router.post('/analyze', upload.single('file'), validateFileUpload, analyzeDeepfake);
 
-// GET /api/deepfake/analysis/:id - Get analysis results by ID
+/**
+ * @swagger
+ * /api/deepfake/analysis/{id}:
+ *   get:
+ *     summary: Get analysis results by ID
+ *     tags: [Deepfake Analysis]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Analysis ID
+ *     responses:
+ *       200:
+ *         description: Analysis results retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Analysis results retrieved successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Analysis'
+ *       404:
+ *         description: Analysis not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 router.get('/analysis/:id', async (req, res) => {
   try {
     // This would typically fetch from database
@@ -71,7 +169,41 @@ router.get('/analysis/:id', async (req, res) => {
   }
 });
 
-// DELETE /api/deepfake/analysis/:id - Delete analysis record
+/**
+ * @swagger
+ * /api/deepfake/analysis/{id}:
+ *   delete:
+ *     summary: Delete analysis record
+ *     tags: [Deepfake Analysis]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Analysis ID
+ *     responses:
+ *       200:
+ *         description: Analysis deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ *       404:
+ *         description: Analysis not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 router.delete('/analysis/:id', async (req, res) => {
   try {
     // This would typically delete from database
@@ -86,6 +218,43 @@ router.delete('/analysis/:id', async (req, res) => {
       error: error.message
     });
   }
+});
+
+/**
+ * @swagger
+ * /api/deepfake/disclaimer:
+ *   get:
+ *     summary: Get deepfake analysis disclaimer
+ *     tags: [Deepfake Analysis]
+ *     responses:
+ *       200:
+ *         description: Disclaimer retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Disclaimer retrieved successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     disclaimer:
+ *                       type: string
+ *                       example: This platform is for educational purposes only and does not perform real deepfake detection.
+ */
+router.get('/disclaimer', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Disclaimer retrieved successfully',
+    data: {
+      disclaimer: 'This platform is for educational purposes only and does not perform real deepfake detection. Results should not be used as definitive evidence of authenticity or manipulation.'
+    }
+  });
 });
 
 module.exports = router;

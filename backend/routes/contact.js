@@ -4,10 +4,135 @@ const { validateContactForm } = require('../middleware/validation');
 
 const router = express.Router();
 
-// POST /api/contact/submit - Submit contact form
+/**
+ * @swagger
+ * /api/contact/submit:
+ *   post:
+ *     summary: Submit contact form
+ *     tags: [Contact]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - subject
+ *               - message
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Contact person's name
+ *                 example: John Doe
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Contact person's email
+ *                 example: john@example.com
+ *               subject:
+ *                 type: string
+ *                 description: Message subject
+ *                 example: Technical Support Request
+ *               message:
+ *                 type: string
+ *                 description: Message content
+ *                 example: I need help with the deepfake detection feature
+ *     responses:
+ *       200:
+ *         description: Contact form submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Contact form submitted successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     submissionId:
+ *                       type: string
+ *                       description: Unique submission ID
+ *                       example: sub-1234567890-abc123
+ *                     emailSent:
+ *                       type: boolean
+ *                       description: Whether notification email was sent
+ *                       example: true
+ *                     estimatedResponseTime:
+ *                       type: string
+ *                       description: Expected response time
+ *                       example: 24-48 hours
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 router.post('/submit', validateContactForm, submitContactForm);
 
-// GET /api/contact/status - Get contact form submission status (for admin)
+/**
+ * @swagger
+ * /api/contact/status:
+ *   get:
+ *     summary: Get contact form submission status (admin only)
+ *     tags: [Contact]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Contact form status retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Contact form status retrieved
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     total_submissions:
+ *                       type: integer
+ *                       description: Total number of submissions
+ *                       example: 25
+ *                     pending_responses:
+ *                       type: integer
+ *                       description: Number of submissions pending response
+ *                       example: 5
+ *                     recent_submissions:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/ContactSubmission'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 router.get('/status', async (req, res) => {
   try {
     // This would typically fetch from database
