@@ -55,6 +55,7 @@ const csrfProtection = (req, res, next) => {
 
 // Import routes
 const deepfakeRoutes = require('./routes/deepfake');
+const cnnDeepfakeRoutes = require('./routes/cnnDeepfake');
 const socialEngineeringRoutes = require('./routes/socialEngineering');
 const contactRoutes = require('./routes/contact');
 const authRoutes = require('./routes/auth');
@@ -256,6 +257,7 @@ app.get('/api-docs.json', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/deepfake', deepfakeRoutes);
+app.use('/api/cnn-deepfake', cnnDeepfakeRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/social-engineering', socialEngineeringRoutes);
 app.use('/api/upload', uploadRoutes);
