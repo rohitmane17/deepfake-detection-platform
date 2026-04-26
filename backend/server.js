@@ -215,6 +215,10 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => {
+    // Skip rate limiting for now to avoid proxy issues
+    return process.env.NODE_ENV === 'production';
+  }
 });
 app.use(limiter);
 
