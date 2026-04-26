@@ -1,16 +1,9 @@
-const nodemailer = require('nodemailer');
+const emailService = require('../config/emailConfig');
 
-// Mock email transporter - in production, use real SMTP configuration
-const createTransporter = () => {
-  return nodemailer.createTransporter({
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: process.env.EMAIL_PORT || 587,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  });
+// Email validation helper
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
 };
 
 // Submit contact form
@@ -18,12 +11,31 @@ const submitContactForm = async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
 
-    // In a real application, you would:
-    // 1. Save to database
-    // 2. Send notification email to admin
-    // 3. Send confirmation email to user
+    // Validate required fields
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required'
+      });
+    }
 
-    // Mock database save
+    // Validate email format
+    if (!validateEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address'
+      });
+    }
+
+    // Validate field lengths
+    if (name.length > 100 || subject.length > 200 || message.length > 2000) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid input length. Name (max 100), Subject (max 200), Message (max 2000)'
+      });
+    }
+
+    // Generate unique submission ID
     const submissionId = 'sub-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
     
     // Prepare email to admin
@@ -60,40 +72,32 @@ const submitContactForm = async (req, res) => {
       `
     };
 
-    // Send emails (mock implementation for demo)
+    // Send emails using the email service
     let emailSent = false;
+    let emailError = null;
     
     try {
-      console.log('Email configuration check:', {
-        hasEmailUser: !!process.env.EMAIL_USER,
-        hasEmailPass: !!process.env.EMAIL_PASS,
-        hasAdminEmail: !!process.env.ADMIN_EMAIL,
-        emailUser: process.env.EMAIL_USER
+      // Send admin notification
+      const adminResult = await emailService.sendContactNotification({
+        name, email, subject, message, submissionId
       });
-
-      const transporter = createTransporter();
       
-      // Only send emails if email configuration is properly set up
-      if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-        console.log('Sending admin email to:', process.env.ADMIN_EMAIL || 'admin@neurox-ai.com');
-        await transporter.sendMail(adminEmailOptions);
-        console.log('Admin email sent successfully');
-
-        console.log('Sending user confirmation email to:', email);
-        await transporter.sendMail(userEmailOptions);
-        console.log('User email sent successfully');
-        emailSent = true;
-      } else {
-        console.log('Email configuration incomplete - skipping email sending');
+      // Send user confirmation
+      const userResult = await emailService.sendUserConfirmation({
+        name, email, subject, submissionId
+      });
+      
+      emailSent = adminResult.success && userResult.success;
+      
+      if (!emailSent) {
+        emailError = 'Email service unavailable';
+        console.warn('Email service issues:', { adminResult, userResult });
       }
+      
     } catch (emailError) {
       console.error('Email sending failed:', emailError);
-      console.error('Email error details:', {
-        message: emailError.message,
-        code: emailError.code,
-        response: emailError.response
-      });
-      // Continue without failing the request
+      emailError = emailError.message;
+      // Continue with response even if email fails
     }
 
     res.status(200).json({
@@ -102,6 +106,7 @@ const submitContactForm = async (req, res) => {
       data: {
         submissionId: submissionId,
         emailSent: emailSent,
+        emailError: emailError,
         estimatedResponseTime: '24-48 hours'
       }
     });
@@ -167,6 +172,8 @@ const updateSubmissionStatus = async (req, res) => {
 
 module.exports = {
   submitContactForm,
+  getEmailStatus,
+  testEmailConfiguration,
   getContactSubmissions,
   updateSubmissionStatus
 };
