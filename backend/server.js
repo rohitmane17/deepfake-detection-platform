@@ -20,6 +20,10 @@ dotenv.config();
 // Connect to MongoDB
 connectDB();
 
+// Initialize Express app early to set trust proxy
+const app = express();
+app.set('trust proxy', true);
+
 // CSRF Token Store (in production, use Redis or database)
 const csrfTokens = new Map();
 
@@ -56,12 +60,7 @@ const authRoutes = require('./routes/auth');
 const uploadRoutes = require('./routes/upload');
 const detectionRoutes = require('./routes/detection');
 
-// Initialize Express app
-const app = express();
 const PORT = process.env.PORT || 5000;
-
-// Trust proxy for Render/Heroku deployment
-app.set('trust proxy', true);
 
 // Session middleware (in production, use express-session with a proper store)
 app.use((req, res, next) => {
