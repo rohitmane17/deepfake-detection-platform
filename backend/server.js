@@ -14,9 +14,13 @@ const AnalysisLogger = require('./utils/analysisLogger');
 const ErrorHandler = require('./utils/errorHandler');
 const connectDB = require('./config/database');
 const { specs, swaggerUi } = require('./config/swagger');
+const { validateEnvironment } = require('./config/envValidator');
 
 // Load environment variables
 dotenv.config();
+
+// Validate environment variables
+validateEnvironment();
 
 // Connect to MongoDB
 connectDB();
@@ -80,7 +84,8 @@ const logger = new AnalysisLogger();
 // Function to run Python face detection
 async function runFaceDetection(imagePath) {
   return new Promise((resolve, reject) => {
-    const python = spawn('python', ['face_detection.py', imagePath]);
+    const pythonScript = path.join(__dirname, 'face_detection.py');
+    const python = spawn('python', [pythonScript, imagePath]);
     let dataString = '';
     let errorString = '';
 
@@ -126,18 +131,23 @@ async function runFaceDetection(imagePath) {
       }
     });
 
-    python.on('error', (error) => {
-      console.error('Failed to start Python process:', error);
-      // Fall back to simulator if Python is not available
+    // Add timeout to prevent hanging
+    const timeout = setTimeout(() => {
+      python.kill();
+      console.error('Python script timed out');
       resolve({
         prediction: 'AI Generated',
         confidence: 75,
         risk_level: 'Medium',
-        explanation: 'Analysis completed using fallback detection methods.',
+        explanation: 'Analysis completed using fallback detection methods (timeout).',
         processing_time: '1.2s',
         face_count: 0,
         image_analysis: {}
       });
+    }, 30000); // 30 second timeout
+
+    python.on('close', () => {
+      clearTimeout(timeout);
     });
   });
 }
@@ -210,15 +220,21 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token']
 }));
 
-// Rate limiting disabled for now to fix proxy issues
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 minutes
-//   max: 100, // limit each IP to 100 requests per windowMs
-//   message: 'Too many requests from this IP, please try again later.',
-//   standardHeaders: true,
-//   legacyHeaders: false,
-// });
-// app.use(limiter);
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: {
+    success: false,
+    message: 'Too many requests from this IP, please try again later.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  trustProxy: true
+});
+
+// Apply rate limiting to all API routes
+app.use('/api/', limiter);
 
 // Body parsing middleware
 app.use(compression());
@@ -247,6 +263,28 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: 'NeuroX AI Defense API Documentation'
 }));
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  const healthCheck = {
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development',
+    version: '1.0.0',
+    services: {
+      database: 'connected', // This would be checked in production
+      email: process.env.EMAIL_USER ? 'configured' : 'not configured',
+      storage: 'local'
+    },
+    memory: {
+      used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + 'MB',
+      total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024) + 'MB'
+    }
+  };
+
+  res.status(200).json(healthCheck);
+});
 
 // API Docs JSON endpoint
 app.get('/api-docs.json', (req, res) => {

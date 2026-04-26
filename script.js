@@ -451,7 +451,7 @@ function handleFileSelect(e) {
 function handleFile(file) {
     // Validate file type and size
     const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'video/mp4', 'video/mov'];
-    const maxSize = 50 * 1024 * 1024; // 50MB
+    const maxSize = 10 * 1024 * 1024; // 10MB (matching backend limit)
 
     if (!validTypes.includes(file.type)) {
         showNotification('Please upload a valid image (JPG, PNG) or video (MP4, MOV) file', 'error');
@@ -459,7 +459,7 @@ function handleFile(file) {
     }
 
     if (file.size > maxSize) {
-        showNotification('File size must be less than 50MB', 'error');
+        showNotification('File size must be less than 10MB', 'error');
         return;
     }
 
@@ -507,8 +507,63 @@ function startAnalysis() {
     document.querySelector('.upload-section').style.display = 'none';
     document.getElementById('loadingSection').style.display = 'block';
 
-    // Simulate analysis progress
-    simulateAnalysis();
+    // Start real analysis
+    performRealAnalysis();
+}
+
+async function performRealAnalysis() {
+    const progressFill = document.getElementById('progressFill');
+    const progressPercentage = document.getElementById('progressPercentage');
+    let progress = 0;
+
+    try {
+        // Create FormData for file upload
+        const formData = new FormData();
+        formData.append('file', uploadedFile);
+
+        // Get CSRF token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                          localStorage.getItem('csrfToken');
+
+        // Start progress simulation
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 10;
+            if (progress >= 90) progress = 90; // Cap at 90% until complete
+            progressFill.style.width = progress + '%';
+            progressPercentage.textContent = Math.round(progress) + '%';
+        }, 500);
+
+        // Make API call to backend
+        const response = await fetch('https://neurox-ai-backend-6gz3.onrender.com/api/deepfake/analyze', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-Token': csrfToken
+            }
+        });
+
+        clearInterval(progressInterval);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        // Complete progress
+        progressFill.style.width = '100%';
+        progressPercentage.textContent = '100%';
+
+        setTimeout(() => {
+            showRealResults(result);
+        }, 500);
+
+    } catch (error) {
+        clearInterval(progressInterval);
+        console.error('Analysis failed:', error);
+        showNotification('Analysis failed. Please try again.', 'error');
+        resetUploadSection();
+    }
 }
 
 function simulateAnalysis() {
@@ -529,6 +584,20 @@ function simulateAnalysis() {
     }, 300);
 }
 
+function showRealResults(result) {
+    // Hide loading, show results
+    document.getElementById('loadingSection').style.display = 'none';
+    document.getElementById('detectionResult').style.display = 'block';
+
+    if (result.success) {
+        const data = result.data;
+        displayRealResults(data);
+    } else {
+        showNotification('Analysis failed: ' + result.message, 'error');
+        resetUploadSection();
+    }
+}
+
 function showResults() {
     // Hide loading, show results
     document.getElementById('loadingSection').style.display = 'none';
@@ -540,6 +609,56 @@ function showResults() {
     const riskLevel = confidence > 85 ? 'high' : confidence > 70 ? 'medium' : 'low';
 
     displayResults(confidence, isDeepfake, riskLevel);
+}
+
+function displayRealResults(data) {
+    const resultIcon = document.getElementById('resultIcon');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultSubtitle = document.getElementById('resultSubtitle');
+    const confidenceFill = document.getElementById('confidenceFill');
+    const confidenceText = document.getElementById('confidenceText');
+    const riskLevelText = document.getElementById('riskLevelText');
+    const explanationText = document.getElementById('explanationText');
+
+    // Update UI with real data
+    const isDeepfake = data.prediction === 'AI Generated';
+    const confidence = data.confidence || 0;
+    const riskLevel = data.riskLevel || 'Unknown';
+
+    // Set icon and colors based on result
+    if (isDeepfake) {
+        resultIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+        resultIcon.style.color = '#ef4444';
+        resultTitle.textContent = 'Deepfake Detected';
+        resultTitle.style.color = '#ef4444';
+    } else {
+        resultIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+        resultIcon.style.color = '#10b981';
+        resultTitle.textContent = 'Authentic Content';
+        resultTitle.style.color = '#10b981';
+    }
+
+    resultSubtitle.textContent = `Risk Level: ${riskLevel.charAt(0).toUpperCase() + riskLevel.slice(1)}`;
+    confidenceFill.style.width = confidence + '%';
+    confidenceText.textContent = confidence + '%';
+    riskLevelText.textContent = riskLevel.charAt(0).toUpperCase() + riskLevel.slice(1);
+    explanationText.textContent = data.explanation || 'Analysis completed successfully.';
+}
+
+function resetUploadSection() {
+    // Reset to initial state
+    document.getElementById('loadingSection').style.display = 'none';
+    document.getElementById('detectionResult').style.display = 'none';
+    document.querySelector('.upload-section').style.display = 'block';
+    document.getElementById('fileInfo').style.display = 'none';
+    document.getElementById('uploadArea').style.display = 'block';
+    
+    // Reset variables
+    uploadedFile = null;
+    analyzeBtn.disabled = true;
+    
+    // Reset file input
+    fileInput.value = '';
 }
 
 function displayResults(confidence, isDeepfake, riskLevel) {
